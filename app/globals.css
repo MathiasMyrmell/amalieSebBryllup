@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+ * Fargepalett og typografi.
+ * Vil du bytte farger på hele siden? Endre verdiene her.
+ * ---------------------------------------------------------------- */
+@theme {
+  --color-krem: #faf7f2;
+  --color-krem-dyp: #f2ece1;
+  --color-blekk: #2c2a26;
+  --color-dempet: #6d675d;
+  --color-salvie: #7d8b70;
+  --color-salvie-dyp: #5e6b53;
+  --color-gull: #b79b6a;
+  --color-kant: #e3dbcd;
+
+  --font-display: var(--font-serif-display), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* slik at ankerlenker ikke havner under den faste menyen */
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background-color: var(--color-krem);
+  color: var(--color-blekk);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Myk innfading når seksjoner scrolles inn i bildet */
+.fade-inn {
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.7s ease-out;
+}
+
+.fade-inn.synlig {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .fade-inn {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
