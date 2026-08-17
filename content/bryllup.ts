@@ -125,27 +125,23 @@ export const bryllup = {
       tekst: "[Mørk dress / smoking / pent antrekk]. Vi setter pris på om dere unngår hvitt.",
     },
     {
-      tittel: "Overnatting",
-      tekst:
-        "Vi har reservert rom på [hotell] til rabattert pris. Oppgi kode «[KODE]» ved booking, innen [dato].",
-    },
-    {
       tittel: "Transport",
       tekst:
         "Buss går fra [sted] kl. [tid], og tilbake fra festlokalet kl. [tid]. Taxi bestilles på [telefonnummer].",
     },
     {
       tittel: "Barn",
-      tekst: "[Vi har dessverre ikke plass til barn i bryllupet / Barn er hjertelig velkomne].",
+      tekst:
+        "Vi har dessverre ikke plass til barn i bryllupet, og håper på forståelse for det.",
     },
     {
       tittel: "Tale eller innslag?",
-      tekst: "Ta kontakt med Håvard i god tid, senest [dato].",
+      tekst:
+        "Vi setter stor pris på taler, sanger og innslag. Si ifra til toastmaster Håvard i god tid, så får han satt sammen programmet.",
     },
     {
       tittel: "Bilder",
-      tekst:
-        "Vi har fotograf på plass – nyt gjerne seremonien uten mobil. Del gjerne egne bilder med emneknaggen [#emneknagg] etterpå.",
+      tekst: "Vi har fotograf på plass – nyt gjerne seremonien uten mobil.",
     },
   ],
 
@@ -188,19 +184,25 @@ export const bryllup = {
    * Bildet beskjæres til en sirkel, så et kvadratisk utsnitt fungerer best
    * (ca. 400 x 400 px holder). La "bilde" stå tom ("") for å vise initialene
    * i stedet – kortene ser hele ut uansett.
+   *
+   * Den som har `hoved: true` løftes fram i et bredt kort øverst. Sett den på
+   * en annen person for å bytte hovedkontakt – rekkefølgen i listen spiller ingen rolle.
    */
   kontakter: [
     {
       rolle: "Toastmaster",
       navn: "Håvard Klette",
+      hoved: true,
       bilde: "",
       telefon: "[+47 000 00 000]",
       epost: "[epost@eksempel.no]",
-      notat: "Kontakt om taler, sanger og innslag.",
+      notat:
+        "Har du tenkt å holde en tale, sang eller annet innslag i løpet av dagen? Ta kontakt med Håvard for å koordinere dette med resten av programmet!",
     },
     {
       rolle: "Forlover for Amalie",
       navn: "Frida Krüger Hansen",
+      hoved: false,
       bilde: "",
       telefon: "[+47 000 00 000]",
       epost: "",
@@ -209,6 +211,7 @@ export const bryllup = {
     {
       rolle: "Forlover for Sebastian",
       navn: "Andreas Kristiansen",
+      hoved: false,
       bilde: "",
       telefon: "[+47 000 00 000]",
       epost: "",
@@ -217,6 +220,7 @@ export const bryllup = {
     {
       rolle: "Forlover for Sebastian",
       navn: "Mathias Myrmell Moen",
+      hoved: false,
       bilde: "",
       telefon: "[+47 000 00 000]",
       epost: "",

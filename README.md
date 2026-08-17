@@ -115,23 +115,37 @@ Du forblir innlogget i 30 dager, eller til du trykker «Logg ut». Innloggingen 
 en `httpOnly`-informasjonskapsel som bare inneholder et avtrykk av koden, ikke koden
 selv. Endrer du `ADMIN_KODE`, blir alle utlogget.
 
+**Fjerne svar:** hver rad har en «Fjern»-knapp. Svaret slettes ikke, men flyttes ned i
+listen «Fjernet» nederst på siden og telles ikke lenger med i tallene øverst. Derfra
+kan det hentes opp igjen når som helst. Nyttig for dubletter, testsvar og gjester som
+melder avbud i etterkant.
+
+I «Fjernet»-listen ligger det også en «Slett»-knapp som fjerner svaret for godt.
+Den spør «Er du sikker?» først, og kan ikke angres. Bare svar som allerede ligger i
+arkivet kan slettes, så et feilklikk i hovedlisten er aldri endelig.
+
 Dette er en enkel sperre for å holde oversikten unna gjester og søkemotorer – ikke ekte
 brukerinnlogging. Bruk en kode du ikke bruker andre steder.
 
-`data/rsvp.json` er i `.gitignore`, så gjestenes opplysninger havner ikke i git.
+### Hvor svarene lagres
 
-### Viktig om hosting og RSVP
+Siden velger lagring selv, ut fra om det finnes en database:
 
-Fillagringen krever en server med **varig filsystem** – f.eks. en VPS, Docker, eller en
-maskin som kjører `npm run build && npm start`.
+| Miljøvariabel                     | Lagring                | Brukes til        |
+| --------------------------------- | ---------------------- | ----------------- |
+| ingen                             | `data/rsvp.json`       | lokal utvikling   |
+| `POSTGRES_URL` eller `DATABASE_URL` | Postgres             | drift             |
 
-Setter du siden på **Vercel, Netlify eller lignende serverløse plattformer, blir filen
-slettet** ved hver ny utrulling, og svarene forsvinner. Velg da ett av disse i stedet:
+Lokalt trenger du altså ingen database – skjemaet virker med én gang. Filen
+`data/rsvp.json` er i `.gitignore`, så gjestenes opplysninger havner aldri i git.
 
-- Bytt ut innmaten i `lib/rsvp-lager.ts` med f.eks. Vercel Postgres, Supabase eller Turso –
-  resten av koden trenger ingen endring.
-- Eller send svarene på e-post i stedet for å lagre dem (f.eks. med Resend), i
-  `app/api/rsvp/route.ts`.
+Selve valget skjer i [`lib/rsvp-lager.ts`](lib/rsvp-lager.ts), som peker videre til
+`rsvp-lager-fil.ts` eller `rsvp-lager-postgres.ts`. Vil du bruke noe helt annet, lager du
+en ny fil med de samme fire funksjonene – resten av koden trenger ingen endring.
+
+**Viktig:** på Vercel, Netlify og andre serverløse plattformer er filsystemet
+skrivebeskyttet. Der virker fillagringen ikke i det hele tatt – første gjest som trykker
+«Send svar» får feilmelding. Database er derfor påkrevd i drift på slike plattformer.
 
 ### Skru av RSVP etter fristen
 
@@ -140,7 +154,36 @@ knappen på forsiden.
 
 ---
 
-## Publisere siden
+## Publisere på Vercel
+
+Du trenger ikke GitHub – du kan laste opp rett fra maskinen:
+
+```bash
+npm i -g vercel
+```
+
+```bash
+vercel
+```
+
+Første kjøring oppretter prosjektet og gir deg en preview-URL. `vercel --prod` legger det
+ut for alvor. `.gitignore` respekteres, så `node_modules` og `data/` blir ikke med.
+
+### Koble på databasen
+
+1. Åpne prosjektet på vercel.com → **Storage** → opprett en Postgres-database
+2. Koble den til prosjektet. Vercel setter `POSTGRES_URL` (og `DATABASE_URL`) automatisk
+3. Legg til admin-koden: **Settings → Environment Variables**, eller
+
+```bash
+vercel env add ADMIN_KODE production
+```
+
+4. Rull ut på nytt, så tabellen `rsvp` opprettes av seg selv ved første svar
+
+`.env.local` lastes aldri opp – variablene må settes i Vercel.
+
+### Kjøre på egen server i stedet
 
 Stopp dev-serveren først – `npm run dev` og `npm run build` deler mappen `.next`, og
 kjører du dem samtidig får du 404 på script-filer i nettleseren.
@@ -169,7 +212,9 @@ app/
   admin/page.tsx          innlogging + oversikt over RSVP-svar
   api/rsvp/route.ts       tar imot og validerer svar
 components/               én fil per seksjon
-lib/rsvp-lager.ts         lesing/skriving av data/rsvp.json
+lib/rsvp-lager.ts         velger lagring: database eller fil
+lib/rsvp-lager-postgres.ts   lagring i Postgres (drift)
+lib/rsvp-lager-fil.ts        lagring i data/rsvp.json (lokalt)
 lib/admin-tilgang.ts      innlogging til /admin
 public/galleri/           bilder til galleriet
 public/kontakter/         portretter av toastmaster og forlovere

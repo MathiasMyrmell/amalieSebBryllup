@@ -1,7 +1,9 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { erLike, loggInn, loggUt, riktigKode } from "@/lib/admin-tilgang";
+import { erInnlogget, erLike, loggInn, loggUt, riktigKode } from "@/lib/admin-tilgang";
+import { settFjernet, slettSvar } from "@/lib/rsvp-lager";
 
 /** Kalles av innloggingsskjemaet. Returnerer en feilmelding, eller slipper deg inn. */
 export async function sendKode(
@@ -30,4 +32,41 @@ export async function sendKode(
 export async function loggUtHandling() {
   await loggUt();
   redirect("/admin");
+}
+
+/**
+ * Flytter et svar til arkivet nederst på siden, eller henter det opp igjen.
+ * Server actions kan kalles utenfra, så innloggingen må sjekkes her også –
+ * det holder ikke at siden selv er beskyttet.
+ */
+async function endreFjernet(skjema: FormData, fjernet: boolean) {
+  if (!(await erInnlogget())) return;
+
+  const id = String(skjema.get("id") ?? "");
+  if (!id) return;
+
+  await settFjernet(id, fjernet);
+  revalidatePath("/admin");
+}
+
+export async function fjernSvar(skjema: FormData) {
+  await endreFjernet(skjema, true);
+}
+
+export async function hentOppSvar(skjema: FormData) {
+  await endreFjernet(skjema, false);
+}
+
+/**
+ * Sletter et svar for godt. Bekreftelsen skjer i nettleseren, men det er
+ * `slettSvar` som passer på at bare arkiverte svar kan slettes.
+ */
+export async function slettSvarHandling(skjema: FormData) {
+  if (!(await erInnlogget())) return;
+
+  const id = String(skjema.get("id") ?? "");
+  if (!id) return;
+
+  await slettSvar(id);
+  revalidatePath("/admin");
 }

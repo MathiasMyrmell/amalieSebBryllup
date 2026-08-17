@@ -1,50 +1,47 @@
-import { promises as fs } from "node:fs";
-import path from "node:path";
+import type { Lager, Svar } from "./rsvp-typer";
+
+export type { Svar };
 
 /**
- * Enkel lagring av RSVP-svar i en JSON-fil under  data/rsvp.json.
+ * Velger hvor RSVP-svarene lagres.
  *
- * Dette holder for et bryllup med noen hundre gjester, og krever ingen
- * database. MERK: det forutsetter en server med skrivbart filsystem
- * (f.eks. egen VPS, Docker eller `npm start` på en maskin som står på).
- * Kjører du på Vercel eller andre serverløse plattformer er filsystemet
- * flyktig – se README for alternativer.
+ *   POSTGRES_URL / DATABASE_URL satt  →  Postgres  (Vercel og annen drift)
+ *   ingen av dem satt                 →  data/rsvp.json  (lokal utvikling)
+ *
+ * Resten av koden bryr seg ikke om hvilken som brukes – begge har samme
+ * funksjoner. Vil du bytte til noe helt annet, er det bare å lage en ny fil
+ * med de samme fire funksjonene og peke hit.
  */
+const brukPostgres = Boolean(process.env.POSTGRES_URL ?? process.env.DATABASE_URL);
 
-export type Svar = {
-  id: string;
-  mottatt: string;
-  navn: string;
-  epost: string;
-  telefon: string;
-  kommer: "ja" | "nei";
-  antall: number;
-  folge: string;
-  allergier: string;
-  melding: string;
-};
+async function lager(): Promise<Lager> {
+  if (brukPostgres) return await import("./rsvp-lager-postgres");
 
-const FIL = path.join(process.cwd(), "data", "rsvp.json");
+  // Uten denne ville fillagringen blitt brukt på Vercel, og feilet med en
+  // kryptisk EROFS-feil ved første skriving. Bedre å si hva som mangler.
+  if (process.env.VERCEL) {
+    throw new Error(
+      "Ingen database er koblet til. Filsystemet på Vercel er skrivebeskyttet, " +
+        "så POSTGRES_URL (eller DATABASE_URL) må være satt under Settings → " +
+        "Environment Variables. Husk å rulle ut på nytt etterpå.",
+    );
+  }
+
+  return await import("./rsvp-lager-fil");
+}
 
 export async function lesSvar(): Promise<Svar[]> {
-  try {
-    const innhold = await fs.readFile(FIL, "utf8");
-    const data: unknown = JSON.parse(innhold);
-    return Array.isArray(data) ? (data as Svar[]) : [];
-  } catch (feil) {
-    // Filen finnes ikke ennå – det er helt greit før første svar.
-    if ((feil as NodeJS.ErrnoException).code === "ENOENT") return [];
-    throw feil;
-  }
+  return (await lager()).lesSvar();
 }
 
 export async function leggTilSvar(svar: Svar): Promise<void> {
-  const alle = await lesSvar();
-  alle.push(svar);
+  return (await lager()).leggTilSvar(svar);
+}
 
-  await fs.mkdir(path.dirname(FIL), { recursive: true });
-  // Skriv til midlertidig fil først, så ingen svar går tapt om noe kræsjer midtveis.
-  const midlertidig = `${FIL}.tmp`;
-  await fs.writeFile(midlertidig, JSON.stringify(alle, null, 2), "utf8");
-  await fs.rename(midlertidig, FIL);
+export async function settFjernet(id: string, fjernet: boolean): Promise<boolean> {
+  return (await lager()).settFjernet(id, fjernet);
+}
+
+export async function slettSvar(id: string): Promise<boolean> {
+  return (await lager()).slettSvar(id);
 }
