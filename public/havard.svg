@@ -1,0 +1,41 @@
+<svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="sq"><rect x="0" y="0" width="300" height="300"/></clipPath>
+    <radialGradient id="bg" cx="50%" cy="38%" r="70%">
+      <stop offset="0%" stop-color="#FBF3E7"/>
+      <stop offset="100%" stop-color="#EFDFC8"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="300" height="300" fill="url(#bg)"/>
+
+  <g clip-path="url(#sq)">
+    <g transform="translate(150,148) scale(1.5)">
+      <!-- suit -->
+      <path d="M-104 112 Q-92 46 -34 30 L34 30 Q92 46 104 112 Z" fill="#4A4A52"/>
+      <path d="M-18 28 L0 66 L18 28 L10 26 L0 46 L-10 26 Z" fill="#FBFAF6"/>
+      <path d="M-20 28 Q-6 48 0 66 L-14 112 L-40 112 Q-36 54 -24 28 Z" fill="#3D3D45"/>
+      <path d="M20 28 Q6 48 0 66 L14 112 L40 112 Q36 54 24 28 Z" fill="#3D3D45"/>
+      <path d="M0 48 L-8 58 L0 112 L8 58 Z" fill="#8FA57E"/>
+      <!-- neck + head -->
+      <path d="M-14 8 h28 v26 h-28 z" fill="#DCAE8B"/>
+      <ellipse cx="0" cy="-30" rx="38" ry="44" fill="#F2CDAF"/>
+      <!-- beard -->
+      <path d="M-36 -26 q2 42 36 44 q34 -2 36 -44 q-8 28 -36 28 q-28 0 -36 -28 z" fill="#A47C3C" opacity="0.9"/>
+      <!-- hair -->
+      <path d="M-38 -36 C-40 -80 -18 -90 0 -90 C20 -90 40 -80 38 -36 C32 -60 18 -68 0 -68 C-18 -68 -32 -60 -38 -36 Z" fill="#C7A15C"/>
+      <path d="M-26 -70 q12 -10 26 -8 q-14 2 -22 12 z" fill="#DDBE80"/>
+      <!-- features -->
+      <path d="M-24 -38 q7 7 14 0" stroke="#5C4526" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M10 -38 q7 7 14 0" stroke="#5C4526" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M-9 -12 q9 8 18 0" stroke="#8A6144" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <!-- boutonniere -->
+      <g transform="translate(44,84)">
+        <path d="M-4 8 q4 -10 2 -18" stroke="#8FA57E" stroke-width="2.4" fill="none"/>
+        <circle cx="0" cy="-8" r="7" fill="#F6D9DF"/>
+        <circle cx="9" cy="-2" r="5" fill="#D98494"/>
+        <path d="M-10 -4 q-8 -4 -9 -11 q9 1 12 8 z" fill="#8FA57E"/>
+      </g>
+    </g>
+  </g>
+</svg>

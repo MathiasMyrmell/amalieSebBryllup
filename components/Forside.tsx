@@ -26,10 +26,10 @@ export default function Forside() {
         Vi gifter oss
       </p>
 
-      <h1 className="font-display text-6xl font-light leading-[1.05] sm:text-8xl">
-        {bryllup.par.brud}
-        <span className="mx-4 text-salvie sm:mx-6">&amp;</span>
-        {bryllup.par.brudgom}
+      <h1 className="flex max-w-full flex-wrap items-center justify-center gap-x-4 gap-y-1 font-display text-6xl font-light leading-[1.05] sm:gap-x-6 sm:text-8xl">
+        <span>{bryllup.par.brud}</span>
+        <span className="text-salvie">&amp;</span>
+        <span>{bryllup.par.brudgom}</span>
       </h1>
 
       <div className="mt-10 flex items-center gap-5 text-sm uppercase tracking-[0.2em] text-dempet">

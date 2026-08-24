@@ -1,0 +1,46 @@
+<svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="sq"><rect x="0" y="0" width="300" height="300"/></clipPath>
+    <radialGradient id="bg" cx="50%" cy="38%" r="70%">
+      <stop offset="0%" stop-color="#FBF3E7"/>
+      <stop offset="100%" stop-color="#EFDFC8"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="300" height="300" fill="url(#bg)"/>
+
+  <g clip-path="url(#sq)">
+    <g transform="translate(150,148) scale(1.5)">
+      <!-- suit -->
+      <path d="M-104 112 Q-92 46 -34 30 L34 30 Q92 46 104 112 Z" fill="#2F5D4C"/>
+      <path d="M-18 28 L0 66 L18 28 L10 26 L0 46 L-10 26 Z" fill="#FBFAF6"/>
+      <path d="M-20 28 Q-6 48 0 66 L-14 112 L-40 112 Q-36 54 -24 28 Z" fill="#28503F"/>
+      <path d="M20 28 Q6 48 0 66 L14 112 L40 112 Q36 54 24 28 Z" fill="#28503F"/>
+      <path d="M0 48 L-8 58 L0 112 L8 58 Z" fill="#C9A227"/>
+      <!-- neck + head -->
+      <path d="M-14 8 h28 v26 h-28 z" fill="#E3B694"/>
+      <ellipse cx="0" cy="-30" rx="38" ry="44" fill="#F5D2B6"/>
+      <!-- freckles -->
+      <g fill="#D79A75" opacity="0.75">
+        <circle cx="-22" cy="-24" r="1.5"/><circle cx="-16" cy="-18" r="1.5"/>
+        <circle cx="-28" cy="-17" r="1.4"/><circle cx="22" cy="-24" r="1.5"/>
+        <circle cx="16" cy="-18" r="1.5"/><circle cx="28" cy="-18" r="1.4"/>
+      </g>
+      <!-- auburn hair -->
+      <path d="M-38 -36 C-40 -82 -16 -90 2 -90 C24 -90 40 -78 38 -36 C32 -62 16 -70 -2 -70 C-20 -70 -32 -60 -38 -36 Z" fill="#B4541F"/>
+      <path d="M-38 -44 q-2 -40 40 -42 q-30 8 -32 44 z" fill="#8F3E14"/>
+      <path d="M20 -84 q22 8 18 44 q-2 -30 -22 -40 z" fill="#C96A34"/>
+      <!-- features -->
+      <path d="M-24 -38 q7 7 14 0" stroke="#6B3B1E" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M10 -38 q7 7 14 0" stroke="#6B3B1E" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M-9 -10 q9 8 18 0" stroke="#B5765A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <!-- boutonniere -->
+      <g transform="translate(44,84)">
+        <path d="M-4 8 q4 -10 2 -18" stroke="#8FA57E" stroke-width="2.4" fill="none"/>
+        <circle cx="0" cy="-8" r="7" fill="#F6D9DF"/>
+        <circle cx="9" cy="-2" r="5" fill="#D98494"/>
+        <path d="M-10 -4 q-8 -4 -9 -11 q9 1 12 8 z" fill="#8FA57E"/>
+      </g>
+    </g>
+  </g>
+</svg>

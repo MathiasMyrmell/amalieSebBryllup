@@ -4,6 +4,7 @@ import Galleri from "@/components/Galleri";
 import Gaver from "@/components/Gaver";
 import Kontakt from "@/components/Kontakt";
 import Meny from "@/components/Meny";
+import Portrett from "@/components/Portrett";
 import Praktisk from "@/components/Praktisk";
 import Program from "@/components/Program";
 import Rsvp from "@/components/Rsvp";
@@ -15,6 +16,7 @@ export default function Hjem() {
       <Meny />
       <main>
         <Forside />
+        <Portrett />
         <Program />
         <Steder />
         <Praktisk />

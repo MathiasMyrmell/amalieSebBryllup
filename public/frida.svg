@@ -1,0 +1,42 @@
+<svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="sq"><rect x="0" y="0" width="300" height="300"/></clipPath>
+    <radialGradient id="bg" cx="50%" cy="38%" r="70%">
+      <stop offset="0%" stop-color="#FBF3E7"/>
+      <stop offset="100%" stop-color="#EFDFC8"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="300" height="300" fill="url(#bg)"/>
+
+  <g clip-path="url(#sq)">
+    <g transform="translate(150,148) scale(1.5)">
+      <!-- dress -->
+      <path d="M-104 112 Q-92 46 -34 30 L34 30 Q92 46 104 112 Z" fill="#D46A7E"/>
+      <path d="M-22 28 Q0 52 22 28 Q0 44 -22 28 Z" fill="#C25A73"/>
+      <path d="M-30 34 Q0 50 30 34 L32 42 Q0 60 -32 42 Z" fill="#C9A227"/>
+      <!-- neck + head -->
+      <path d="M-13 8 h26 v26 h-26 z" fill="#E3B694"/>
+      <ellipse cx="0" cy="-30" rx="37" ry="43" fill="#F3CFB2"/>
+      <!-- hair -->
+      <path d="M-38 -34 C-40 -80 -18 -90 0 -90 C20 -90 40 -78 38 -34 C34 -58 18 -66 0 -66 C-18 -66 -32 -58 -38 -34 Z" fill="#8A6234"/>
+      <path d="M-38 -32 q-16 46 -8 84 q-18 -38 -8 -86 z" fill="#8A6234"/>
+      <path d="M38 -32 q16 46 8 84 q18 -38 8 -86 z" fill="#8A6234"/>
+      <path d="M-34 -50 q16 -18 40 -14 q-24 2 -36 18 z" fill="#A07845"/>
+      <!-- flowers in hair -->
+      <g transform="translate(30,-62)">
+        <circle cx="0" cy="0" r="8" fill="#E8A33D"/>
+        <circle cx="-11" cy="6" r="6" fill="#F6D9DF"/>
+        <circle cx="8" cy="10" r="5" fill="#D98494"/>
+        <path d="M-16 -2 q-8 -5 -8 -12 q9 2 12 9 z" fill="#8FA57E"/>
+      </g>
+      <!-- features -->
+      <path d="M-24 -38 q7 7 14 0" stroke="#5B3A2A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M10 -38 q7 7 14 0" stroke="#5B3A2A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M-9 -10 q9 8 18 0" stroke="#B9646A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <!-- earrings -->
+      <circle cx="-33" cy="-18" r="3" fill="#C9A227"/>
+      <circle cx="33" cy="-18" r="3" fill="#C9A227"/>
+    </g>
+  </g>
+</svg>

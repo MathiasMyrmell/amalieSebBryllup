@@ -17,6 +17,17 @@
 
   --font-display: var(--font-serif-display), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
+
+  /* Palett for den alternative utformingen på /v2 */
+  --color-natt: #121110;
+  --color-natt-lys: #1c1a18;
+  --color-elfenben: #f1ede5;
+  --color-tåke: #8b857c;
+  --color-messing: #c2a26a;
+  --color-strek: rgba(241, 237, 229, 0.14);
+
+  --font-grotesk: var(--font-v2-display), ui-sans-serif, system-ui, sans-serif;
+  --font-brodtekst: var(--font-v2-body), ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
@@ -30,6 +41,11 @@ body {
   color: var(--color-blekk);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/* /v2 har mørk bunn. Uten dette blinker det kremhvitt ved overscroll. */
+body:has(.tema-v2) {
+  background-color: var(--color-natt);
 }
 
 /* Myk innfading når seksjoner scrolles inn i bildet */

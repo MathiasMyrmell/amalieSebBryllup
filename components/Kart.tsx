@@ -16,6 +16,7 @@
 const LAG = "light_all";
 
 const FLIS = 256;
+
 /** Bredden på flisteppet. Kortet er smalere og beskjærer det, så kartet fyller alltid ut. */
 const BREDDE = 960;
 const HOYDE = 224;
@@ -37,6 +38,11 @@ export default function Kart({
   tittel,
   lenke,
   zoom = 14,
+  lag = LAG,
+  hoyde = HOYDE,
+  ramme = "border border-kant bg-krem-dyp",
+  markor = "bg-salvie-dyp ring-4 ring-krem/80",
+  merke = "bg-krem/80 text-dempet",
 }: {
   lat: number;
   lon: number;
@@ -44,18 +50,25 @@ export default function Kart({
   /** Åpnes når gjesten trykker på kartet */
   lenke: string;
   zoom?: number;
+  /** Kartlag hos CARTO, f.eks. "light_all" eller "dark_all" */
+  lag?: string;
+  hoyde?: number;
+  /** Klasser for ramme, markør og opphavsmerke – lar /v2 bruke egen palett */
+  ramme?: string;
+  markor?: string;
+  merke?: string;
 }) {
   // Hvor senterpunktet ligger i kartets eget pikselrutenett
   const senterX = flisX(lon, zoom) * FLIS;
   const senterY = flisY(lat, zoom) * FLIS;
 
   const venstre = senterX - BREDDE / 2;
-  const topp = senterY - HOYDE / 2;
+  const topp = senterY - hoyde / 2;
 
   const fraX = Math.floor(venstre / FLIS);
   const tilX = Math.floor((venstre + BREDDE - 1) / FLIS);
   const fraY = Math.floor(topp / FLIS);
-  const tilY = Math.floor((topp + HOYDE - 1) / FLIS);
+  const tilY = Math.floor((topp + hoyde - 1) / FLIS);
 
   const fliser = [];
   for (let x = fraX; x <= tilX; x++) {
@@ -75,12 +88,12 @@ export default function Kart({
       target="_blank"
       rel="noreferrer"
       aria-label={`Kart over ${tittel} – åpne veibeskrivelse`}
-      className="group relative block overflow-hidden border border-kant bg-krem-dyp"
-      style={{ height: HOYDE }}
+      className={`group relative block overflow-hidden ${ramme}`}
+      style={{ height: hoyde }}
     >
       <div
         className="absolute top-0 left-1/2 transition-opacity group-hover:opacity-90"
-        style={{ width: BREDDE, height: HOYDE, marginLeft: -BREDDE / 2 }}
+        style={{ width: BREDDE, height: hoyde, marginLeft: -BREDDE / 2 }}
       >
         {fliser.map((flis) => (
           // Rene kartfliser fra et eksternt tjeneste – vanlig <img> er riktig her,
@@ -88,7 +101,7 @@ export default function Kart({
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={`${flis.x}-${flis.y}`}
-            src={`https://basemaps.cartocdn.com/${LAG}/${zoom}/${flis.x}/${flis.y}@2x.png`}
+            src={`https://basemaps.cartocdn.com/${lag}/${zoom}/${flis.x}/${flis.y}@2x.png`}
             alt=""
             width={FLIS}
             height={FLIS}
@@ -102,10 +115,12 @@ export default function Kart({
       {/* Markør midt i kartet */}
       <span
         aria-hidden
-        className="absolute top-1/2 left-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-salvie-dyp ring-4 ring-krem/80"
+        className={`absolute top-1/2 left-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full ${markor}`}
       />
 
-      <span className="absolute right-0 bottom-0 bg-krem/80 px-1.5 py-0.5 text-[0.6rem] text-dempet">
+      <span
+        className={`absolute right-0 bottom-0 px-1.5 py-0.5 text-[0.6rem] ${merke}`}
+      >
         © OpenStreetMap © CARTO
       </span>
     </a>

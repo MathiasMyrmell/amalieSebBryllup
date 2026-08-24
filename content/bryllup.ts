@@ -37,6 +37,20 @@ export const bryllup = {
   ingress:
     "Vi gifter oss, og vi vil gjerne ha dere med på feiringen. Her finner dere all praktisk informasjon om dagen.",
 
+  /**
+   * Stort bilde av paret, vist i et bredt bånd rett under forsiden.
+   * Legg bildefilen i mappen  public/  (eller en undermappe) og skriv
+   * inn filnavnet under, f.eks. "/portrett.jpg" eller "/galleri/oss.jpg".
+   * La "src" stå tom ("") for å vise en pen plassholder i mellomtiden.
+   * Bildet dekker hele bredden, så et liggende (bredformat) bilde passer best.
+   */
+  portrett: {
+    src: "/wedding-couple-landscape.svg",
+    alt: "Amalie og Sebastian",
+    /** Valgfri kort tekst som legges nederst over bildet. La stå tom ("") for å skjule. */
+    bildetekst: "",
+  },
+
   /* ---------------------------------------------------------
    * 2. PROGRAM FOR DAGEN
    * ------------------------------------------------------- */
@@ -193,17 +207,17 @@ export const bryllup = {
       rolle: "Toastmaster",
       navn: "Håvard Klette",
       hoved: true,
-      bilde: "",
+      bilde: "/havard.svg",
       telefon: "[+47 000 00 000]",
       epost: "[epost@eksempel.no]",
       notat:
-        "Har du tenkt å holde en tale, sang eller annet innslag i løpet av dagen? Ta kontakt med Håvard for å koordinere dette med resten av programmet!",
+        "Har du tenkt å holde en tale, synge en sang eller ha et annet innslag i løpet av dagen? Ta kontakt med Håvard for å koordinere dette med resten av programmet!",
     },
     {
       rolle: "Forlover for Amalie",
       navn: "Frida Krüger Hansen",
       hoved: false,
-      bilde: "",
+      bilde: "/frida.svg",
       telefon: "[+47 000 00 000]",
       epost: "",
       notat: "",
@@ -212,7 +226,7 @@ export const bryllup = {
       rolle: "Forlover for Sebastian",
       navn: "Andreas Kristiansen",
       hoved: false,
-      bilde: "",
+      bilde: "/andreas.svg",
       telefon: "[+47 000 00 000]",
       epost: "",
       notat: "",
@@ -221,7 +235,7 @@ export const bryllup = {
       rolle: "Forlover for Sebastian",
       navn: "Mathias Myrmell Moen",
       hoved: false,
-      bilde: "",
+      bilde: "/mathias.svg",
       telefon: "[+47 000 00 000]",
       epost: "",
       notat: "",
@@ -236,7 +250,7 @@ export const bryllup = {
     frist: "1. juni 2027",
     /** Vises som ren tekst under skjemaet */
     hjelpetekst:
-      "Har dere spørsmål, eller trenger å endre svaret? Send en melding til Håvard.",
+      "Har dere spørsmål, eller trenger å endre svaret? Send en melding til brudeparet eller Håvard.",
     /** Sett til false for å skjule hele RSVP-seksjonen (f.eks. etter fristen) */
     apen: true,
   },

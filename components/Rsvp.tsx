@@ -13,6 +13,11 @@ export default function Rsvp() {
   const [status, setStatus] = useState<Status>("klar");
   const [feilmelding, setFeilmelding] = useState("");
   const [kommer, setKommer] = useState<"ja" | "nei" | "">("");
+  // Holdes som tekst, slik at feltet kan stå tomt mens gjesten skriver
+  const [antallTekst, setAntallTekst] = useState("1");
+
+  const antall = Math.min(Math.max(parseInt(antallTekst, 10) || 1, 1), 10);
+  const antallFolge = antall - 1;
 
   async function send(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -142,34 +147,50 @@ export default function Rsvp() {
             {/* Feltene under er bare relevante for dem som faktisk kommer */}
             {kommer === "ja" && (
               <>
-                <div className="grid gap-6 sm:grid-cols-2">
+                <div className="sm:max-w-[12rem]">
+                  <label htmlFor="antall" className="mb-1 block text-sm">
+                    Hvor mange kommer?
+                  </label>
+                  <p id="antall-hjelp" className="mb-2 text-xs text-dempet">
+                    Deg selv medregnet.
+                  </p>
+                  <input
+                    id="antall"
+                    name="antall"
+                    type="number"
+                    inputMode="numeric"
+                    min={1}
+                    max={10}
+                    value={antallTekst}
+                    onChange={(e) => setAntallTekst(e.target.value)}
+                    aria-describedby="antall-hjelp"
+                    className={feltStil}
+                  />
+                </div>
+
+                {/* Følgefeltet gir bare mening når gjesten tar med noen */}
+                {antallFolge > 0 && (
                   <div>
-                    <label htmlFor="antall" className="mb-2 block text-sm">
-                      Antall personer
+                    <label htmlFor="folge" className="mb-1 block text-sm">
+                      Hvem tar du med?
                     </label>
-                    <input
-                      id="antall"
-                      name="antall"
-                      type="number"
-                      min={1}
-                      max={10}
-                      defaultValue={1}
-                      className={feltStil}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="folge" className="mb-2 block text-sm">
-                      Navn på følge
-                    </label>
+                    <p id="folge-hjelp" className="mb-2 text-xs text-dempet">
+                      {antallFolge === 1
+                        ? "Skriv navnet på den du tar med."
+                        : `Skriv navnet på de ${antallFolge} du tar med.`}
+                    </p>
                     <input
                       id="folge"
                       name="folge"
                       maxLength={300}
+                      aria-describedby="folge-hjelp"
                       className={feltStil}
-                      placeholder="Kari Nordmann"
+                      placeholder={
+                        antallFolge === 1 ? "Kari Nordmann" : "Kari Nordmann, Ola Nordmann"
+                      }
                     />
                   </div>
-                </div>
+                )}
 
                 <div>
                   <label htmlFor="allergier" className="mb-2 block text-sm">
