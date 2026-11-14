@@ -44,7 +44,6 @@ export async function synkroniserEpost(
     return { nye: 0, feil: "E-postkontoen er ikke satt opp (SMTP_HOST, SMTP_USER, SMTP_PASS)." };
   }
 
-  const egen = SMTP_USER.toLowerCase();
   const kjente = new Set(
     alleSvar.map((s) => s.epost.trim().toLowerCase()).filter((e) => GYLDIG_EPOST.test(e)),
   );
@@ -103,10 +102,10 @@ export async function synkroniserEpost(
 
           const adresse =
             retning === "inn"
-              ? kjente.has(fra) && fra !== egen
+              ? kjente.has(fra)
                 ? fra
                 : ""
-              : (til.find((a) => kjente.has(a) && a !== egen) ?? "");
+              : (til.find((a) => kjente.has(a)) ?? "");
 
           if (adresse) kandidater.push({ uid: melding.uid, id, adresse });
         }
