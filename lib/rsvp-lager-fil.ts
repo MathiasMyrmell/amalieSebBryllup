@@ -56,6 +56,22 @@ export async function settFjernet(id: string, fjernet: boolean): Promise<boolean
   return true;
 }
 
+/** Endrer om gjesten kommer, og hvor mange. */
+export async function settSvar(
+  id: string,
+  kommer: "ja" | "nei",
+  antall: number,
+): Promise<boolean> {
+  const alle = await lesSvar();
+  const svar = alle.find((s) => s.id === id);
+  if (!svar) return false;
+
+  svar.kommer = kommer;
+  svar.antall = antall;
+  await skrivAlle(alle);
+  return true;
+}
+
 /**
  * Sletter et svar for godt. Til forskjell fra settFjernet kan dette ikke angres,
  * så den brukes bare fra arkivet – etter at svaret allerede er fjernet én gang.

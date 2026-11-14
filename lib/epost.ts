@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { bryllup } from "@/content/bryllup";
+import { lagreEpost } from "./epost-lager";
 import type { Svar } from "./rsvp-typer";
 
 /**
@@ -113,17 +114,26 @@ export async function sendRsvpEpost(svar: Svar): Promise<void> {
   ];
 
   if (gjestKanFaaMail) {
+    const emne =
+      svar.kommer === "ja" ? "Takk for svaret – vi gleder oss!" : "Takk for at du ga beskjed";
+    const tekst = bekreftelsestekst(svar);
+
     utsendinger.push(
-      transporter.sendMail({
-        from: fra,
-        to: svar.epost,
-        replyTo: adresse,
-        subject:
-          svar.kommer === "ja"
-            ? "Takk for svaret – vi gleder oss!"
-            : "Takk for at du ga beskjed",
-        text: bekreftelsestekst(svar),
-      }),
+      transporter
+        .sendMail({ from: fra, to: svar.epost, replyTo: adresse, subject: emne, text: tekst })
+        // Bekreftelsen lagres på gjesten, så den vises i tråden på /admin
+        .then((info) =>
+          lagreEpost({
+            id: info.messageId,
+            adresse: svar.epost.trim().toLowerCase(),
+            retning: "ut",
+            fra: adresse,
+            til: svar.epost,
+            emne,
+            tekst,
+            tidspunkt: new Date().toISOString(),
+          }),
+        ),
     );
   }
 

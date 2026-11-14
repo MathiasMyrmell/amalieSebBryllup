@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { erInnlogget, erLike, loggInn, loggUt, riktigKode } from "@/lib/admin-tilgang";
-import { settFjernet, slettSvar } from "@/lib/rsvp-lager";
+import { slettEposterFor } from "@/lib/epost-lager";
+import { lesSvar, settFjernet, settSvar, slettSvar } from "@/lib/rsvp-lager";
 
 /** Kalles av innloggingsskjemaet. Returnerer en feilmelding, eller slipper deg inn. */
 export async function sendKode(
@@ -60,6 +61,9 @@ export async function hentOppSvar(skjema: FormData) {
 /**
  * Sletter et svar for godt. Bekreftelsen skjer i nettleseren, men det er
  * `slettSvar` som passer på at bare arkiverte svar kan slettes.
+ *
+ * E-postene til gjesten slettes samtidig – men bare hvis ingen andre svar
+ * bruker den samme e-postadressen.
  */
 export async function slettSvarHandling(skjema: FormData) {
   if (!(await erInnlogget())) return;
@@ -67,6 +71,34 @@ export async function slettSvarHandling(skjema: FormData) {
   const id = String(skjema.get("id") ?? "");
   if (!id) return;
 
-  await slettSvar(id);
+  const adresse = (await lesSvar()).find((s) => s.id === id)?.epost.trim().toLowerCase();
+
+  const slettet = await slettSvar(id);
+
+  if (slettet && adresse) {
+    const finnesIgjen = (await lesSvar()).some((s) => s.epost.trim().toLowerCase() === adresse);
+    if (!finnesIgjen) await slettEposterFor(adresse);
+  }
+
+  revalidatePath("/admin");
+}
+
+/**
+ * Endrer et svar til «kommer» eller «kommer ikke» – for dem som ombestemmer
+ * seg, eller som har svart feil. Antall gjelder bare når de kommer.
+ */
+export async function endreSvarHandling(skjema: FormData) {
+  if (!(await erInnlogget())) return;
+
+  const id = String(skjema.get("id") ?? "");
+  const valg = skjema.get("kommer");
+  const kommer = valg === "ja" ? "ja" : valg === "nei" ? "nei" : null;
+  if (!id || !kommer) return;
+
+  const ra = Number(skjema.get("antall"));
+  const antall =
+    kommer === "ja" ? Math.min(Math.max(Number.isFinite(ra) ? Math.trunc(ra) : 1, 1), 10) : 0;
+
+  await settSvar(id, kommer, antall);
   revalidatePath("/admin");
 }

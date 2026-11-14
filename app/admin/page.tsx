@@ -1,8 +1,11 @@
 import { erInnlogget } from "@/lib/admin-tilgang";
-import { lesSvar, type Svar } from "@/lib/rsvp-lager";
+import { lesEposter } from "@/lib/epost-lager";
+import { synkroniserEpost } from "@/lib/epost-innboks";
+import { lesSvar } from "@/lib/rsvp-lager";
+import type { Epost, Svar } from "@/lib/rsvp-typer";
+import Gjesterad, { type Variant } from "./Gjesterad";
 import Innlogging from "./Innlogging";
-import SlettKnapp from "./SlettKnapp";
-import { fjernSvar, hentOppSvar, loggUtHandling } from "./handlinger";
+import { loggUtHandling } from "./handlinger";
 
 /**
  * Oversikt over innkomne RSVP-svar.
@@ -11,6 +14,8 @@ import { fjernSvar, hentOppSvar, loggUtHandling } from "./handlinger";
  * Koden settes i .env.local (ADMIN_KODE) – se README.
  */
 export const dynamic = "force-dynamic";
+/** Tid til å hente e-post fra postkassen i tillegg til svarene */
+export const maxDuration = 30;
 
 export const metadata = { robots: { index: false, follow: false } };
 
@@ -45,10 +50,48 @@ export default async function Admin() {
     );
   }
 
+  // Henter nye e-poster fra postkassen hver gang siden åpnes. Går det galt, vises
+  // det som allerede er lagret, med en beskjed øverst.
+  const epostSjekk = await synkroniserEpost(alle);
+  let eposter: Epost[] = [];
+  try {
+    eposter = await lesEposter();
+  } catch (feil) {
+    console.error("Klarte ikke lese e-post:", feil);
+  }
+
+  // E-postene samles på adressen gjesten oppga. Brukes samme adresse flere ganger,
+  // hører tråden til den som svarte først.
+  const eierAvAdresse = new Map<string, Svar>();
+  for (const s of alle) {
+    const adresse = s.epost.trim().toLowerCase();
+    if (adresse && !eierAvAdresse.has(adresse)) eierAvAdresse.set(adresse, s);
+  }
+  const eposterPerAdresse = new Map<string, Epost[]>();
+  for (const e of eposter) {
+    eposterPerAdresse.set(e.adresse, [...(eposterPerAdresse.get(e.adresse) ?? []), e]);
+  }
+
+  const rad = (s: Svar, variant: Variant) => {
+    const adresse = s.epost.trim().toLowerCase();
+    const eier = adresse ? eierAvAdresse.get(adresse) : undefined;
+    const erEier = !eier || eier.id === s.id;
+    return (
+      <Gjesterad
+        key={s.id}
+        svar={s}
+        eposter={erEier ? (eposterPerAdresse.get(adresse) ?? []) : []}
+        eier={erEier ? undefined : eier?.navn}
+        variant={variant}
+      />
+    );
+  };
+
   const aktive = alle.filter((s) => !s.fjernet);
   const fjernede = alle.filter((s) => s.fjernet);
 
   const kommer = aktive.filter((s) => s.kommer === "ja");
+  const kommerIkke = aktive.filter((s) => s.kommer !== "ja");
   const antallGjester = kommer.reduce((sum, s) => sum + (s.antall || 1), 0);
 
   return (
@@ -68,13 +111,27 @@ export default async function Admin() {
       <div className="my-8 flex gap-10 border-y border-kant py-5 text-sm">
         <Tall verdi={aktive.length} etikett="svar totalt" />
         <Tall verdi={antallGjester} etikett="gjester kommer" />
-        <Tall verdi={aktive.length - kommer.length} etikett="kan ikke" />
+        <Tall verdi={kommerIkke.length} etikett="kan ikke" />
       </div>
+
+      {epostSjekk.feil && (
+        <p role="alert" className="mb-8 border border-kant bg-krem-dyp p-4 text-sm text-red-800">
+          Fikk ikke hentet nye e-poster akkurat nå: {epostSjekk.feil}. E-poster som allerede er
+          lagret vises som vanlig.
+        </p>
+      )}
 
       {aktive.length === 0 ? (
         <p className="text-dempet">Ingen svar ennå.</p>
       ) : (
-        <Tabell svar={aktive} handling={fjernSvar} knappetekst="Fjern" />
+        <>
+          <Gruppe tittel={`Kommer (${kommer.length})`} variant="kommer">
+            {kommer.map((s) => rad(s, "kommer"))}
+          </Gruppe>
+          <Gruppe tittel={`Kommer ikke (${kommerIkke.length})`} variant="kommerIkke">
+            {kommerIkke.map((s) => rad(s, "kommerIkke"))}
+          </Gruppe>
+        </>
       )}
 
       {fjernede.length > 0 && (
@@ -84,15 +141,10 @@ export default async function Admin() {
           </h2>
           <p className="mt-2 mb-6 text-sm text-dempet">
             Disse telles ikke med i tallene over. «Hent opp igjen» legger svaret tilbake i
-            listen. «Slett» fjerner det for godt, og kan ikke angres.
+            listen. «Slett» fjerner det og tilhørende e-poster for godt, og kan ikke angres.
           </p>
           <div className="opacity-70">
-            <Tabell
-              svar={fjernede}
-              handling={hentOppSvar}
-              knappetekst="Hent opp igjen"
-              kanSlettes
-            />
+            <Tabell variant="fjernet">{fjernede.map((s) => rad(s, "fjernet"))}</Tabell>
           </div>
         </section>
       )}
@@ -100,77 +152,47 @@ export default async function Admin() {
   );
 }
 
-function Tabell({
-  svar,
-  handling,
-  knappetekst,
-  kanSlettes,
+function Gruppe({
+  tittel,
+  variant,
+  children,
 }: {
-  svar: Svar[];
-  /** Server action som kjøres på knappen i hver rad */
-  handling: (skjema: FormData) => Promise<void>;
-  knappetekst: string;
-  /** Viser i tillegg en «Slett»-knapp. Bare aktuelt i arkivet. */
-  kanSlettes?: boolean;
+  tittel: string;
+  variant: Variant;
+  children: React.ReactNode;
 }) {
+  const tom = Array.isArray(children) && children.length === 0;
+  return (
+    <section className="mt-12 first:mt-0">
+      <h2 className="mb-5 font-display text-2xl font-light">{tittel}</h2>
+      {tom ? <p className="text-sm text-dempet">Ingen.</p> : <Tabell variant={variant}>{children}</Tabell>}
+    </section>
+  );
+}
+
+/** Overskriftene følger hva som er relevant: følge og allergier gir bare mening for dem som kommer */
+function Tabell({ variant, children }: { variant: Variant; children: React.ReactNode }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-b border-kant text-xs uppercase tracking-wider text-dempet">
             <th className="py-3 pr-4">Navn</th>
-            <th className="py-3 pr-4">Svar</th>
-            <th className="py-3 pr-4">Ant.</th>
-            <th className="py-3 pr-4">Følge</th>
-            <th className="py-3 pr-4">Allergier</th>
+            {variant === "fjernet" && <th className="py-3 pr-4">Svar</th>}
+            {variant === "kommer" && (
+              <>
+                <th className="py-3 pr-4">Ant.</th>
+                <th className="py-3 pr-4">Følge</th>
+                <th className="py-3 pr-4">Allergier</th>
+              </>
+            )}
             <th className="py-3 pr-4">Kontakt</th>
             <th className="py-3 pr-4">Hilsen</th>
             <th className="py-3 pr-4">Mottatt</th>
             <th className="py-3" />
           </tr>
         </thead>
-        <tbody>
-          {svar.map((s) => (
-            <tr key={s.id} className="border-b border-kant/60 align-top">
-              <td className="py-3 pr-4 font-medium">{s.navn}</td>
-              <td className="py-3 pr-4">
-                <span className={s.kommer === "ja" ? "text-salvie-dyp" : "text-dempet"}>
-                  {s.kommer === "ja" ? "Kommer" : "Kan ikke"}
-                </span>
-              </td>
-              <td className="py-3 pr-4 tabular-nums">{s.antall || "–"}</td>
-              <td className="py-3 pr-4">{s.folge || "–"}</td>
-              <td className="py-3 pr-4">{s.allergier || "–"}</td>
-              <td className="py-3 pr-4">
-                {s.epost && <div className="break-all">{s.epost}</div>}
-                {s.telefon && <div>{s.telefon}</div>}
-                {!s.epost && !s.telefon && "–"}
-              </td>
-              <td className="max-w-xs py-3 pr-4 text-dempet">{s.melding || "–"}</td>
-              <td className="py-3 pr-4 whitespace-nowrap text-dempet">
-                {new Date(s.mottatt).toLocaleDateString("nb-NO", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "2-digit",
-                })}
-              </td>
-              <td className="py-3 whitespace-nowrap text-right">
-                <div className="flex justify-end gap-4">
-                  <form action={handling}>
-                    <input type="hidden" name="id" value={s.id} />
-                    <button
-                      type="submit"
-                      className="text-xs text-dempet underline-offset-4 transition-colors hover:text-salvie-dyp hover:underline"
-                    >
-                      {knappetekst}
-                    </button>
-                  </form>
-                  {kanSlettes && <SlettKnapp id={s.id} navn={s.navn} />}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+        <tbody>{children}</tbody>
       </table>
     </div>
   );

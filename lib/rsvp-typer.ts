@@ -18,10 +18,27 @@ export type Svar = {
   fjernet?: boolean;
 };
 
+/** En e-post sendt til eller mottatt fra en gjest. Hører til gjestens e-postadresse. */
+export type Epost = {
+  /** Message-ID fra e-posten. Gjør at samme e-post aldri lagres to ganger. */
+  id: string;
+  /** Gjestens adresse (små bokstaver) – det er den tråden samles under */
+  adresse: string;
+  /** «ut» = sendt til gjesten, «inn» = mottatt fra gjesten */
+  retning: "inn" | "ut";
+  fra: string;
+  til: string;
+  emne: string;
+  tekst: string;
+  /** ISO-tidspunkt */
+  tidspunkt: string;
+};
+
 /** Det alle lagringsmåter må kunne gjøre */
 export type Lager = {
   lesSvar(): Promise<Svar[]>;
   leggTilSvar(svar: Svar): Promise<void>;
   settFjernet(id: string, fjernet: boolean): Promise<boolean>;
+  settSvar(id: string, kommer: "ja" | "nei", antall: number): Promise<boolean>;
   slettSvar(id: string): Promise<boolean>;
 };

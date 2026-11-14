@@ -34,7 +34,7 @@ const globaltOmfang = globalThis as typeof globalThis & {
   _rsvpTabell?: Promise<void>;
 };
 
-function pool(): Pool {
+export function pool(): Pool {
   if (!TILKOBLING) {
     throw new Error(
       "Mangler POSTGRES_URL (eller DATABASE_URL). Koble på en database i Vercel, eller fjern variabelen for å lagre i fil lokalt.",
@@ -156,6 +156,22 @@ export async function settFjernet(id: string, fjernet: boolean): Promise<boolean
     id,
     fjernet,
   ]);
+
+  return (rowCount ?? 0) > 0;
+}
+
+/** Endrer om gjesten kommer, og hvor mange. Brukes når noen ombestemmer seg. */
+export async function settSvar(
+  id: string,
+  kommer: "ja" | "nei",
+  antall: number,
+): Promise<boolean> {
+  await klargjor();
+
+  const { rowCount } = await pool().query(
+    "UPDATE rsvp SET kommer = $2, antall = $3 WHERE id = $1",
+    [id, kommer, antall],
+  );
 
   return (rowCount ?? 0) > 0;
 }

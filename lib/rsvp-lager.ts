@@ -42,6 +42,14 @@ export async function settFjernet(id: string, fjernet: boolean): Promise<boolean
   return (await lager()).settFjernet(id, fjernet);
 }
 
+export async function settSvar(
+  id: string,
+  kommer: "ja" | "nei",
+  antall: number,
+): Promise<boolean> {
+  return (await lager()).settSvar(id, kommer, antall);
+}
+
 export async function slettSvar(id: string): Promise<boolean> {
   return (await lager()).slettSvar(id);
 }

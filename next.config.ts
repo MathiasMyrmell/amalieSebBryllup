@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
    * av bundleren, feiler tilkoblingen først når koden kjører – typisk som en 500
    * ved første databasekall. Denne linjen lar den ligge som en vanlig node-modul.
    */
-  serverExternalPackages: ["pg"],
+  serverExternalPackages: ["pg", "imapflow", "mailparser", "nodemailer"],
 };
 
 export default nextConfig;
