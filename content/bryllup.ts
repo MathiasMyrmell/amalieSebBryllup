@@ -19,7 +19,7 @@ export const bryllup = {
     portrett: true,
     program: true,
     sted: true,
-    praktisk: false,
+    praktisk: true,
     gaver: true,
     galleri: true,
     kontakt: true,
