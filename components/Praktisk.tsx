@@ -1,9 +1,9 @@
 import { bryllup } from "@/content/bryllup";
 import Seksjon from "./Seksjon";
 
-export default function Praktisk() {
+export default function Praktisk({ toner }: { toner?: boolean }) {
   return (
-    <Seksjon id="praktisk" overtittel="Godt å vite" tittel="Praktisk informasjon">
+    <Seksjon id="praktisk" overtittel="Godt å vite" tittel="Praktisk informasjon" toner={toner}>
       <dl className="grid gap-x-12 gap-y-10 sm:grid-cols-2">
         {bryllup.praktisk.map((punkt) => (
           <div key={punkt.tittel}>

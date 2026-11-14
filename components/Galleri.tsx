@@ -3,11 +3,13 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { bryllup } from "@/content/bryllup";
+import { kortFlate } from "@/lib/flater";
 import Seksjon from "./Seksjon";
 
-export default function Galleri() {
+export default function Galleri({ toner }: { toner?: boolean }) {
   const bilder = bryllup.galleri;
   const [apent, setApent] = useState<number | null>(null);
+  const kort = kortFlate(toner);
 
   // Lukk forstørret bilde med Escape.
   useEffect(() => {
@@ -18,7 +20,7 @@ export default function Galleri() {
   }, [apent]);
 
   return (
-    <Seksjon id="galleri" overtittel="Litt om oss" tittel="Bilder">
+    <Seksjon id="galleri" overtittel="Litt om oss" tittel="Bilder" toner={toner}>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
         {bilder.map((bilde, i) => (
           <figure key={i} className="group relative aspect-[4/5] overflow-hidden">
@@ -38,7 +40,7 @@ export default function Galleri() {
                 />
               </button>
             ) : (
-              <Plassholder tekst={bilde.bildetekst} />
+              <Plassholder tekst={bilde.bildetekst} flate={kort} />
             )}
 
             {bilde.src && bilde.bildetekst && (
@@ -74,9 +76,11 @@ export default function Galleri() {
 }
 
 /** Vises så lenge et bilde mangler i content/bryllup.ts */
-function Plassholder({ tekst }: { tekst: string }) {
+function Plassholder({ tekst, flate }: { tekst: string; flate: string }) {
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-2 border border-dashed border-kant bg-krem-dyp p-4 text-center">
+    <div
+      className={`flex h-full w-full flex-col items-center justify-center gap-2 border border-dashed border-kant p-4 text-center ${flate}`}
+    >
       <span className="text-2xl text-gull/60" aria-hidden>
         &#9906;
       </span>

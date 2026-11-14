@@ -46,7 +46,7 @@ export default function Forside() {
         <Nedtelling dato={bryllup.dato} />
       </div>
 
-      {bryllup.rsvp.apen && (
+      {bryllup.seksjoner.rsvp && bryllup.rsvp.apen && (
         <a
           href="#rsvp"
           className="mt-14 inline-block border border-salvie-dyp px-9 py-3 text-xs uppercase tracking-[0.2em] text-salvie-dyp transition-colors hover:bg-salvie-dyp hover:text-krem"

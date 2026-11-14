@@ -1,9 +1,9 @@
 import { bryllup } from "@/content/bryllup";
 import Seksjon from "./Seksjon";
 
-export default function Program() {
+export default function Program({ toner }: { toner?: boolean }) {
   return (
-    <Seksjon id="program" overtittel="Slik blir dagen" tittel="Program">
+    <Seksjon id="program" overtittel="Slik blir dagen" tittel="Program" toner={toner}>
       <ol className="mx-auto max-w-2xl">
         {bryllup.program.map((post, i) => (
           <li key={`${post.tid}-${post.tittel}`} className="flex gap-6 sm:gap-10">

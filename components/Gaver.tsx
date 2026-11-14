@@ -1,9 +1,9 @@
 import { bryllup } from "@/content/bryllup";
 import Seksjon from "./Seksjon";
 
-export default function Gaver() {
+export default function Gaver({ toner }: { toner?: boolean }) {
   return (
-    <Seksjon id="gaver" overtittel="Ønskeliste" tittel="Gaver" toner>
+    <Seksjon id="gaver" overtittel="Ønskeliste" tittel="Gaver" toner={toner}>
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-lg leading-relaxed text-dempet">{bryllup.gaver.tekst}</p>
 

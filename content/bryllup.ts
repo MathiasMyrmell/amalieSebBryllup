@@ -11,6 +11,23 @@
 
 export const bryllup = {
   /* ---------------------------------------------------------
+   * 0. HVILKE SEKSJONER SOM VISES
+   *    Sett til false for å skjule en seksjon (og meny-lenken)
+   *    til innholdet er klart. Forsiden vises alltid.
+   * ------------------------------------------------------- */
+  seksjoner: {
+    portrett: true,
+    program: true,
+    sted: true,
+    praktisk: false,
+    gaver: true,
+    galleri: true,
+    kontakt: true,
+    /** Også styrt av rsvp.apen lenger ned (skjules etter fristen) */
+    rsvp: true,
+  },
+
+  /* ---------------------------------------------------------
    * 1. PARET OG DATOEN
    * ------------------------------------------------------- */
   par: {
@@ -208,7 +225,7 @@ export const bryllup = {
       navn: "Håvard Klette",
       hoved: true,
       bilde: "/havard.svg",
-      telefon: "[+47 000 00 000]",
+      telefon: "976 07 895",
       epost: "[epost@eksempel.no]",
       notat:
         "Har du tenkt å holde en tale, synge en sang eller ha et annet innslag i løpet av dagen? Ta kontakt med Håvard for å koordinere dette med resten av programmet!",
@@ -227,7 +244,7 @@ export const bryllup = {
       navn: "Andreas Kristiansen",
       hoved: false,
       bilde: "/andreas.svg",
-      telefon: "[+47 000 00 000]",
+      telefon: "900 88 396",
       epost: "",
       notat: "",
     },
@@ -235,8 +252,8 @@ export const bryllup = {
       rolle: "Forlover for Sebastian",
       navn: "Mathias Myrmell Moen",
       hoved: false,
-      bilde: "/mathias.svg",
-      telefon: "[+47 000 00 000]",
+      bilde: "/kontakter/mathias.jpg",
+      telefon: "948 34 998",
       epost: "",
       notat: "",
     },

@@ -2,19 +2,20 @@
 
 import { useState } from "react";
 import { bryllup } from "@/content/bryllup";
+import { innfeltFlate, kortFlate } from "@/lib/flater";
 import Seksjon from "./Seksjon";
 
 type Status = "klar" | "sender" | "sendt" | "feil";
 
-const feltStil =
-  "w-full border border-kant bg-krem px-4 py-3 text-blekk outline-none transition-colors placeholder:text-dempet/60 focus:border-salvie";
-
-export default function Rsvp() {
+export default function Rsvp({ toner }: { toner?: boolean }) {
   const [status, setStatus] = useState<Status>("klar");
   const [feilmelding, setFeilmelding] = useState("");
   const [kommer, setKommer] = useState<"ja" | "nei" | "">("");
   // Holdes som tekst, slik at feltet kan stå tomt mens gjesten skriver
   const [antallTekst, setAntallTekst] = useState("1");
+  const kort = kortFlate(toner);
+  const innfelt = innfeltFlate(toner);
+  const feltStil = `w-full border border-kant px-4 py-3 text-blekk outline-none transition-colors placeholder:text-dempet/60 focus:border-salvie ${kort}`;
 
   const antall = Math.min(Math.max(parseInt(antallTekst, 10) || 1, 1), 10);
   const antallFolge = antall - 1;
@@ -51,10 +52,10 @@ export default function Rsvp() {
   if (!bryllup.rsvp.apen) return null;
 
   return (
-    <Seksjon id="rsvp" overtittel={`Svarfrist ${bryllup.rsvp.frist}`} tittel="Kommer du?">
+    <Seksjon id="rsvp" overtittel={`Svarfrist ${bryllup.rsvp.frist}`} tittel="Kommer du?" toner={toner}>
       <div className="mx-auto max-w-xl">
         {status === "sendt" ? (
-          <div className="border border-salvie bg-krem-dyp p-10 text-center">
+          <div className={`border border-salvie p-10 text-center ${kort}`}>
             <p className="font-display text-3xl font-light text-salvie-dyp">
               Tusen takk!
             </p>
@@ -126,7 +127,7 @@ export default function Rsvp() {
                     className={`flex-1 cursor-pointer border px-4 py-3 text-center text-sm transition-colors ${
                       kommer === verdi
                         ? "border-salvie-dyp bg-salvie-dyp text-krem"
-                        : "border-kant bg-krem hover:border-salvie"
+                        : `border-kant hover:border-salvie ${innfelt}`
                     }`}
                   >
                     <input

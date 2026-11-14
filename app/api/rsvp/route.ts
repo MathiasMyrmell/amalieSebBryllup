@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
+import { sendRsvpEpost } from "@/lib/epost";
 import { leggTilSvar, type Svar } from "@/lib/rsvp-lager";
 
 export const runtime = "nodejs";
@@ -59,6 +60,10 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
+
+  // E-post sendes etter at svaret er gitt, så gjesten slipper å vente. Feil her
+  // påvirker ikke svaret – det er allerede lagret.
+  after(() => sendRsvpEpost(svar));
 
   return NextResponse.json({ ok: true });
 }

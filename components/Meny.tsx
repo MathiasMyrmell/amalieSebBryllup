@@ -3,16 +3,20 @@
 import { useEffect, useState } from "react";
 import { bryllup } from "@/content/bryllup";
 
-const lenker = [
-  { href: "#program", tekst: "Program" },
-  { href: "#sted", tekst: "Sted" },
-  { href: "#praktisk", tekst: "Praktisk" },
-  { href: "#gaver", tekst: "Gaver" },
-  { href: "#galleri", tekst: "Galleri" },
-  { href: "#kontakt", tekst: "Kontakt" },
-  // Skjules sammen med skjemaet når RSVP-en stenges, så lenken ikke peker i tomme luften
-  ...(bryllup.rsvp.apen ? [{ href: "#rsvp", tekst: "Gi beskjed" }] : []),
-];
+const { seksjoner: s } = bryllup;
+
+const alleLenker = [
+  { href: "#program", tekst: "Program", vis: s.program },
+  { href: "#sted", tekst: "Sted", vis: s.sted },
+  { href: "#praktisk", tekst: "Praktisk", vis: s.praktisk },
+  { href: "#gaver", tekst: "Gaver", vis: s.gaver },
+  { href: "#galleri", tekst: "Galleri", vis: s.galleri },
+  { href: "#kontakt", tekst: "Kontakt", vis: s.kontakt },
+  // Skjules når seksjonen er av, eller når RSVP er stengt etter fristen
+  { href: "#rsvp", tekst: "Gi beskjed", vis: s.rsvp && bryllup.rsvp.apen },
+] as const;
+
+const lenker = alleLenker.filter((l) => l.vis);
 
 export default function Meny() {
   const [festet, setFestet] = useState(false);

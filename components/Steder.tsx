@@ -1,16 +1,27 @@
 import Image from "next/image";
 import { bryllup } from "@/content/bryllup";
-import Kart from "./Kart";
+import Kart, { type KartIkon } from "./Kart";
+import { innfeltFlate, kortFlate } from "@/lib/flater";
 import Seksjon from "./Seksjon";
 
-export default function Steder() {
+function ikonFor(merkelapp: string): KartIkon {
+  const m = merkelapp.toLowerCase();
+  if (m === "vielse") return "kirke";
+  if (m === "fest") return "fest";
+  return "pin";
+}
+
+export default function Steder({ toner }: { toner?: boolean }) {
+  const kort = kortFlate(toner);
+  const innfelt = innfeltFlate(toner);
+
   return (
-    <Seksjon id="sted" overtittel="Hvor" tittel="Sted" toner>
+    <Seksjon id="sted" overtittel="Hvor" tittel="Sted" toner={toner}>
       <div className="grid gap-8 sm:grid-cols-2">
         {bryllup.steder.map((sted) => (
           <article
             key={sted.navn + sted.merkelapp}
-            className="flex flex-col border border-kant bg-krem"
+            className={`flex flex-col border border-kant ${kort}`}
           >
             {sted.bilde && (
               <div className="relative aspect-[3/2] w-full">
@@ -42,6 +53,13 @@ export default function Steder() {
                     zoom={sted.kart.zoom}
                     tittel={sted.navn}
                     lenke={sted.kartUrl}
+                    ikon={ikonFor(sted.merkelapp)}
+                    ramme={`border border-kant ${innfelt}`}
+                    merke={
+                      toner
+                        ? "bg-krem/80 text-dempet"
+                        : "bg-krem-dyp/80 text-dempet"
+                    }
                   />
                 </div>
               )}
